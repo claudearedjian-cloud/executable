@@ -16,12 +16,15 @@ const { URL } = require('node:url');
 
 const { Room, PHASE, GameError, randomCode } = require('./game');
 const { CATEGORIES } = require('./questions');
+const branding = require('./branding');
 
 const PORT = Number(process.env.PORT || 4173);
 const HOST = process.env.HOST || '0.0.0.0';
 const ORG_NAME = process.env.ORG_NAME || 'Community Centre';
 const PUBLIC_DIR = path.join(__dirname, '..', 'public');
 const ROOM_TTL_MS = 6 * 60 * 60 * 1000;
+
+branding.load(ORG_NAME);
 
 /* ------------------------------------------------------------------ */
 /* Rooms and their subscribers                                         */
@@ -69,6 +72,14 @@ function mutate(room, fn) {
   const result = fn();
   broadcast(room);
   return result;
+}
+
+/** Branding is global, so a change has to reach every room's subscribers. */
+function broadcastAll() {
+  for (const room of rooms.values()) {
+    room.bump();
+    broadcast(room);
+  }
 }
 
 function scheduleExpiry(room) {
@@ -144,7 +155,8 @@ function readBody(req) {
     const chunks = [];
     req.on('data', (chunk) => {
       size += chunk.length;
-      if (size > 64 * 1024) {
+      // Large enough for a logo upload (base64), small enough to stay sane.
+      if (size > 768 * 1024) {
         reject(new GameError('Request too large.', 'too_large'));
         req.destroy();
         return;
@@ -242,9 +254,16 @@ async function handleApi(req, res, url) {
 
   if (parts[1] === 'meta') {
     return sendJson(res, 200, {
-      orgName: ORG_NAME,
+      orgName: branding.toPublic().orgName,
+      branding: branding.toPublic(),
       categories: Object.entries(CATEGORIES).map(([id, c]) => ({ id, name: c.name, accent: c.accent }))
     });
+  }
+
+  if (parts[1] === 'branding' && parts[2] === 'logo' && method === 'GET') {
+    const logo = branding.logoBuffer();
+    if (!logo) return sendError(res, 404, 'No logo has been set.');
+    return send(res, 200, logo.buffer, { 'Content-Type': logo.mime, 'Cache-Control': 'public, max-age=3600' });
   }
 
   if (parts[1] === 'rooms' && parts.length === 2 && method === 'POST') {
@@ -321,6 +340,12 @@ async function handleApi(req, res, url) {
           mutate(room, () => room.resetToLobby());
           scheduleExpiry(room);
           return sendJson(res, 200, { ok: true, state: room.hostState() });
+        case 'branding': {
+          const result = branding.set(body);
+          if (!result.ok) return sendError(res, 400, result.error);
+          broadcastAll();
+          return sendJson(res, 200, { ok: true, branding: branding.toPublic() });
+        }
         default:
           return sendError(res, 404, 'Unknown host action.');
       }

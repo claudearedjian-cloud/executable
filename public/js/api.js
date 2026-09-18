@@ -240,5 +240,53 @@ window.QN = (function () {
       .replace(/'/g, '&#39;');
   }
 
-  return { store, request, connect, toast, qs, countdownRatio, secondsLeft, escapeHtml };
+  /**
+   * Applies organisation branding to the page: name, tagline, accent colour
+   * and logo. Targets the shared ids used across launcher/host/play screens.
+   */
+  function applyBranding(b) {
+    if (!b) return;
+    if (b.accent) document.documentElement.style.setProperty('--brand', b.accent);
+
+    const name = document.getElementById('orgName');
+    if (name && b.orgName) name.textContent = b.orgName;
+
+    const tag = document.getElementById('tagline');
+    if (tag) {
+      tag.textContent = b.tagline || '';
+      tag.classList.toggle('hidden', !b.tagline);
+    }
+
+    const mark = document.getElementById('brandMark');
+    if (mark) {
+      if (b.logoUrl) {
+        mark.classList.add('has-logo');
+        mark.style.backgroundImage = `url("${b.logoUrl}")`;
+      } else {
+        mark.classList.remove('has-logo');
+        mark.style.backgroundImage = '';
+      }
+    }
+  }
+
+  /** Renders a celebrity-style visual: a photo if one is set, else an emoji tile. */
+  function mediaTileHtml(q) {
+    if (!q) return '';
+    if (q.image) return `<img class="media-img" src="${escapeHtml(q.image)}" alt="" />`;
+    if (q.avatar) return `<span class="media-emoji">${escapeHtml(q.avatar)}</span>`;
+    return '';
+  }
+
+  function setMedia(el, q) {
+    const html = mediaTileHtml(q);
+    if (html) {
+      el.innerHTML = html;
+      el.classList.remove('hidden');
+    } else {
+      el.innerHTML = '';
+      el.classList.add('hidden');
+    }
+  }
+
+  return { store, request, connect, toast, qs, countdownRatio, secondsLeft, escapeHtml, applyBranding, setMedia };
 })();

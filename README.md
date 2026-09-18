@@ -23,8 +23,9 @@ troubleshooting.
    code on screen.
 2. **Players join** by scanning the QR code or typing the code at the address
    shown. They enter a name and wait — nothing to install.
-3. **Pick your rounds** — Geography, History, General Knowledge, in any
-   combination — plus how many questions per round and how long each one gets.
+3. **Pick your rounds** — Geography, History, General Knowledge, Celebrities and
+   Lebanon, in any combination — plus how many questions per round and how long
+   each one gets.
 4. **Start.** The question goes up on the big screen and on every phone at the
    same moment. Players tap one of four answers.
 5. **Reveal.** The correct answer lights up, the vote distribution fills in, and
@@ -34,18 +35,33 @@ troubleshooting.
 
 With around 20 players the room is comfortable up to 60.
 
+## Make it yours
+
+The host screen has a **Branding** tab. From there you can set:
+
+- the **organisation name** shown on every screen,
+- a **tagline** (e.g. "Friday quiz, doors 7pm"),
+- a **logo** (PNG/JPG up to ~300 KB) that replaces the default mark,
+- an **accent colour** for buttons and highlights.
+
+Branding is saved to `data/branding.json`, so it survives a restart and is picked
+up by the next game automatically.
+
 ## Questions
 
-75 questions, 25 in each round, four options each:
+125 questions, 25 in each round, four options each:
 
 | Round             | Questions | Example                                                        |
 | ----------------- | --------- | -------------------------------------------------------------- |
 | Geography         | 25        | *What is the capital city of Australia?*                       |
 | History           | 25        | *In which year did the Berlin Wall fall?*                      |
 | General Knowledge | 25        | *How many hearts does an octopus have?*                        |
+| Celebrities       | 25        | *A clue plus a visual tile — "King of Pop", "Queen of Pop"…*    |
+| Lebanon           | 25        | *Which site holds the Roman temples of the Beqaa Valley?*      |
 
 Every question carries a one-line `fact` that the host screen shows on the
-reveal. They are plain data in
+reveal. Celebrities questions show a visual tile (an emoji by default, or a real
+photo if you add an `image` path). They are plain data in
 [`server/questions.js`](server/questions.js) — edit that file in any text
 editor to swap in your own local questions and nothing else needs to change.
 
@@ -107,6 +123,7 @@ server/
   index.js       HTTP server, static files, SSE stream, JSON API
   game.js        Room state machine: lobby, question, reveal, results
   questions.js   The question bank
+  branding.js    Org title / tagline / logo / accent, persisted to data/
 public/
   index.html     Launcher — join a game or run one
   host.html      Host control screen
@@ -143,9 +160,9 @@ npm test
 
 57 tests covering:
 
-- the question bank — 75 questions, 25 per round, four distinct options each, a
+- the question bank — 125 questions, 25 per round, four distinct options each, a
   valid answer index, no duplicates, answers spread across all four positions;
-- the game engine — joining, seating, the full 75-question run, scoring by
+- the game engine — joining, seating, the full 125-question run, scoring by
   speed, streaks, tie-breaks, lock-in, late answers, permissions, reset;
 - the HTTP server — a complete game played over the wire, host-only routes,
   the results CSV, the SSE stream, routing and path traversal;

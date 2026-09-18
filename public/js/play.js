@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  const { qs, request, connect, store, toast, countdownRatio, secondsLeft, escapeHtml } = window.QN;
+  const { qs, request, connect, store, toast, countdownRatio, secondsLeft, escapeHtml, applyBranding, setMedia } = window.QN;
 
   const code = (qs.get('code') || '').trim().toUpperCase();
 
@@ -46,7 +46,9 @@
     finalSummary: document.getElementById('finalSummary'),
     finalStandings: document.getElementById('finalStandings'),
     leaveBtn: document.getElementById('leaveBtn'),
-    goneReason: document.getElementById('goneReason')
+    goneReason: document.getElementById('goneReason'),
+    pMedia: document.getElementById('pMedia'),
+    pRevealMedia: document.getElementById('pRevealMedia')
   };
 
   const CAT_COLOUR = { geography: 'var(--geo)', history: 'var(--his)', general: 'var(--gen)' };
@@ -240,6 +242,7 @@
     el.cat.style.setProperty('--cat', CAT_COLOUR[q.category] || 'var(--brand)');
     el.catName.textContent = q.categoryName;
     el.counter.innerHTML = `${q.number} <span class="faint">/ ${q.total}</span>`;
+    setMedia(el.pMedia, q);
     el.question.textContent = q.text;
 
     const picked = s.me && s.me.choice !== null && s.me.choice !== undefined ? s.me.choice : null;
@@ -278,6 +281,7 @@
       vibrate(60);
     }
 
+    setMedia(el.pRevealMedia, r);
     el.correctText.textContent = r.options[r.correctIndex];
     if (r.fact) {
       el.fact.textContent = r.fact;
@@ -368,6 +372,7 @@
     const myScore = s.me ? s.me.score : 0;
     el.myScore.textContent = String(myScore);
     el.scorePill.hidden = s.phase === 'lobby';
+    applyBranding(s.branding);
 
     switch (s.phase) {
       case 'question':

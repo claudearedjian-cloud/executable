@@ -20,13 +20,16 @@
     <div class="player-shell">
       <header class="player-top">
         <span class="wordmark sm">
-          <span class="mark">
+          <span class="mark" id="brandMark">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3" />
               <path d="M12 17h.01" />
             </svg>
           </span>
-          <span class="name">Quiz Night</span>
+          <span>
+            <span class="name">Quiz Night</span>
+            <span class="org" id="orgName"></span>
+          </span>
         </span>
         <div class="row">
           <span class="chip chip-live" id="connChip"><span class="dot"></span><span id="connText">Connecting</span></span>
@@ -68,6 +71,7 @@
             <div>
               <h2 id="lobbyTitle">You're in</h2>
               <p class="muted mt-s" id="lobbySub">Waiting for the host to start the game.</p>
+              <p class="tagline hidden" id="tagline"></p>
             </div>
             <div class="card card-pad text-centre w-full">
               <p class="eyebrow">Players joined</p>
@@ -89,6 +93,7 @@
             <span class="timer mono" id="pTimer">20</span>
           </div>
 
+          <div class="media-tile hidden" id="pMedia" aria-hidden="true"></div>
           <h2 class="p-question" id="pQuestion">Loading question…</h2>
 
           <div class="answers" id="pAnswers" role="group" aria-label="Answer options"></div>
@@ -110,6 +115,7 @@
 
           <div class="card card-pad">
             <p class="eyebrow">The answer was</p>
+            <div class="media-tile hidden small" id="pRevealMedia" aria-hidden="true"></div>
             <p class="q-text reveal mt-s" id="pCorrectText">—</p>
             <div class="fact-box" id="pFactBox">
               <span class="icon" aria-hidden="true">💡</span>

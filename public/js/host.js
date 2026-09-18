@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  const { qs, request, connect, store, toast, countdownRatio, escapeHtml } = window.QN;
+  const { qs, request, connect, store, toast, countdownRatio, escapeHtml, applyBranding, setMedia } = window.QN;
 
   const code = (qs.get('code') || '').trim().toUpperCase();
   const urlKey = qs.get('key') || '';
@@ -66,7 +66,22 @@
     csvLink: document.getElementById('csvLink'),
     newGameBtn: document.getElementById('newGameBtn'),
     againBtn: document.getElementById('againBtn'),
-    errorReason: document.getElementById('errorReason')
+    errorReason: document.getElementById('errorReason'),
+    tabGameBtn: document.getElementById('tabGameBtn'),
+    tabBrandBtn: document.getElementById('tabBrandBtn'),
+    tabGame: document.getElementById('tabGame'),
+    tabBrand: document.getElementById('tabBrand'),
+    brandOrg: document.getElementById('brandOrg'),
+    brandTag: document.getElementById('brandTag'),
+    brandLogoPreview: document.getElementById('brandLogoPreview'),
+    brandLogoPick: document.getElementById('brandLogoPick'),
+    brandLogoClear: document.getElementById('brandLogoClear'),
+    brandLogoFile: document.getElementById('brandLogoFile'),
+    brandAccent: document.getElementById('brandAccent'),
+    brandAccentReset: document.getElementById('brandAccentReset'),
+    brandSave: document.getElementById('brandSave'),
+    qMedia: document.getElementById('qMedia'),
+    rMedia: document.getElementById('rMedia')
   };
 
   const RING_CIRCUMFERENCE = 2 * Math.PI * 44;
@@ -211,6 +226,7 @@
     el.qCatName.textContent = q.categoryName;
     el.qCounter.innerHTML = `${q.number} <span class="faint">/ ${q.total}</span>`;
     el.qCard.style.setProperty('--cat', CAT_COLOUR[q.category] || 'var(--brand)');
+    setMedia(el.qMedia, q);
     el.qText.textContent = q.text;
   }
 
@@ -282,6 +298,7 @@
     el.statFastest.textContent = r.fastest.length ? `${(r.fastest[0].ms / 1000).toFixed(1)}s` : '—';
     el.statLeader.textContent = s.players.length ? String(s.players[0].score) : '0';
 
+    setMedia(el.rMedia, r);
     el.rQuestion.textContent = r.question;
     renderOptions(el.rOptions, r.options, 'reveal', r);
 
@@ -321,7 +338,8 @@
 
   function render(s) {
     el.playerCount.textContent = `${s.playerCount} player${s.playerCount === 1 ? '' : 's'}`;
-    if (s.orgName) el.orgName.textContent = s.orgName;
+    applyBranding(s.branding);
+    if (s.phase === 'lobby') syncBranding(s.branding);
 
     const phaseLabels = { lobby: 'Lobby', question: 'Question', reveal: 'Answer', finished: 'Results' };
     el.phaseChip.textContent = phaseLabels[s.phase] || 'Lobby';
@@ -377,6 +395,89 @@
   el.nextBtn.addEventListener('click', () => host('next'));
   el.againBtn.addEventListener('click', () => host('start'));
   el.newGameBtn.addEventListener('click', () => host('reset'));
+
+  /* ------------------------- lobby tabs --------------------------- */
+
+  function selectTab(which) {
+    const game = which === 'game';
+    el.tabGameBtn.setAttribute('aria-selected', String(game));
+    el.tabBrandBtn.setAttribute('aria-selected', String(!game));
+    el.tabGame.hidden = !game;
+    el.tabBrand.hidden = game;
+  }
+  el.tabGameBtn.addEventListener('click', () => selectTab('game'));
+  el.tabBrandBtn.addEventListener('click', () => selectTab('brand'));
+
+  /* ------------------------- branding ----------------------------- */
+
+  let logoData = null;
+  let logoChanged = false;
+  let accentCleared = false;
+
+  function setLogoPreview(src) {
+    if (src) el.brandLogoPreview.innerHTML = `<img src="${src}" alt="Logo preview" />`;
+    else el.brandLogoPreview.innerHTML = '<span class="faint">No logo yet</span>';
+  }
+
+  function syncBranding(b) {
+    if (!b) return;
+    if (document.activeElement !== el.brandOrg) el.brandOrg.value = b.orgName || '';
+    if (document.activeElement !== el.brandTag) el.brandTag.value = b.tagline || '';
+    if (b.accent) {
+      el.brandAccent.value = b.accent;
+      accentCleared = false;
+    }
+    if (!logoChanged) setLogoPreview(b.logoUrl);
+  }
+
+  el.brandLogoPick.addEventListener('click', () => el.brandLogoFile.click());
+
+  el.brandLogoFile.addEventListener('change', () => {
+    const file = el.brandLogoFile.files && el.brandLogoFile.files[0];
+    el.brandLogoFile.value = '';
+    if (!file) return;
+    if (file.size > 300 * 1024) return toast('That image is over 300 KB. Pick a smaller one.');
+    const reader = new FileReader();
+    reader.onload = () => {
+      logoData = String(reader.result);
+      logoChanged = true;
+      setLogoPreview(logoData);
+    };
+    reader.onerror = () => toast('Could not read that file.');
+    reader.readAsDataURL(file);
+  });
+
+  el.brandLogoClear.addEventListener('click', () => {
+    logoData = null;
+    logoChanged = true;
+    setLogoPreview(null);
+  });
+
+  el.brandAccent.addEventListener('input', () => {
+    accentCleared = false;
+  });
+  el.brandAccentReset.addEventListener('click', () => {
+    el.brandAccent.value = '#7c96ff';
+    accentCleared = true;
+  });
+
+  el.brandSave.addEventListener('click', async () => {
+    const body = {
+      orgName: el.brandOrg.value.trim(),
+      tagline: el.brandTag.value.trim(),
+      accent: accentCleared ? '' : el.brandAccent.value
+    };
+    if (logoChanged) body.logo = logoData;
+
+    const res = await host('branding', body);
+    if (res && res.ok) {
+      logoChanged = false;
+      logoData = null;
+      setLogoPreview(res.branding && res.branding.logoUrl);
+      applyBranding(res.branding);
+      toast('Branding saved — it now shows on every screen.');
+    }
+  });
 
   document.addEventListener('keydown', (event) => {
     if (!state || event.metaKey || event.ctrlKey || event.altKey) return;

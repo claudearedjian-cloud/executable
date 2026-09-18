@@ -1,9 +1,12 @@
 /**
  * Question bank for Quiz Night.
  *
- * 75 questions: 25 Geography, 25 History, 25 General Knowledge.
- * Every question has exactly four options and `answer` is the 0-based index
- * of the correct one. `fact` is the one-liner the host reads on the reveal.
+ * 125 questions: 25 each of Geography, History, General Knowledge, Celebrities
+ * and Lebanon. Every question has exactly four options and `answer` is the
+ * 0-based index of the correct one. `fact` is the one-liner the host reads on
+ * the reveal. Celebrities questions carry an optional `avatar` (an emoji shown
+ * as the visual tile) and a clue as the question text; an `image` path may be
+ * supplied instead to show a real photo.
  *
  * This file is plain data on purpose so a community centre can edit it in a
  * text editor without touching any code.
@@ -543,16 +546,401 @@ const general = [
   }
 ];
 
+const celebrities = [
+  {
+    id: 'cel-01',
+    avatar: '🎤',
+    question: 'Known as the \u201cQueen of Pop\u201d, with hits like \u201cLike a Prayer\u201d and \u201cVogue\u201d.',
+    options: ['Madonna', 'Cher', 'Whitney Houston', 'Cyndi Lauper'],
+    answer: 0,
+    fact: 'Madonna was born in Michigan in 1958 and has sold more than 300 million records worldwide.'
+  },
+  {
+    id: 'cel-02',
+    avatar: '🕺',
+    question: 'The \u201cKing of Pop\u201d behind \u201cThriller\u201d, the best-selling album of all time.',
+    options: ['Prince', 'Michael Jackson', 'Stevie Wonder', 'James Brown'],
+    answer: 1,
+    fact: 'Thriller (1982) has sold over 70 million copies, more than any other album.'
+  },
+  {
+    id: 'cel-03',
+    avatar: '👑',
+    question: 'Sang \u201cHalo\u201d and \u201cSingle Ladies\u201d and headlined the album \u201cLemonade\u201d.',
+    options: ['Rihanna', 'Alicia Keys', 'Beyonc\u00e9', 'Mariah Carey'],
+    answer: 2,
+    fact: 'Beyonc\u00e9 holds the record for the most Grammy wins of any artist in history.'
+  },
+  {
+    id: 'cel-04',
+    avatar: '🎸',
+    question: 'Behind the \u201cEras Tour\u201d and albums \u201cFearless\u201d and \u201c1989\u201d.',
+    options: ['Katy Perry', 'Taylor Swift', 'Selena Gomez', 'Miley Cyrus'],
+    answer: 1,
+    fact: 'Taylor Swift began in country music and re-recorded her early albums as \u201cTaylor\u2019s Versions\u201d.'
+  },
+  {
+    id: 'cel-05',
+    avatar: '⚽',
+    question: 'Portuguese footballer known as \u201cCR7\u201d, with five Ballon d\u2019Or awards.',
+    options: ['Cristiano Ronaldo', 'Lu\u00eds Figo', 'Neymar', 'Zlatan Ibrahimovi\u0107'],
+    answer: 0,
+    fact: 'Cristiano Ronaldo is the all-time top scorer in men\u2019s international football.'
+  },
+  {
+    id: 'cel-06',
+    avatar: '🏆',
+    question: 'Argentine forward who captained his country to the 2022 World Cup.',
+    options: ['Sergio Ag\u00fcero', 'Lionel Messi', 'Diego Maradona', 'Paulo Dybala'],
+    answer: 1,
+    fact: 'Lionel Messi won a record eight Ballon d\u2019Or awards.'
+  },
+  {
+    id: 'cel-07',
+    avatar: '🎬',
+    question: 'Starred in \u201cTitanic\u201d and won an Oscar for \u201cThe Revenant\u201d.',
+    options: ['Brad Pitt', 'Matt Damon', 'Leonardo DiCaprio', 'Tom Hanks'],
+    answer: 2,
+    fact: 'DiCaprio\u2019s first Oscar came after five previous nominations.'
+  },
+  {
+    id: 'cel-08',
+    avatar: '🎭',
+    question: 'Played the lead in \u201cFight Club\u201d and \u201cOnce Upon a Time in Hollywood\u201d.',
+    options: ['Brad Pitt', 'George Clooney', 'Johnny Depp', 'Leonardo DiCaprio'],
+    answer: 0,
+    fact: 'Brad Pitt won a Best Picture Oscar as a producer of 12 Years a Slave.'
+  },
+  {
+    id: 'cel-09',
+    avatar: '🦖',
+    question: 'Played Lara Croft in \u201cTomb Raider\u201d and the title role in \u201cMaleficent\u201d.',
+    options: ['Scarlett Johansson', 'Angelina Jolie', 'Natalie Portman', 'Charlize Theron'],
+    answer: 1,
+    fact: 'Angelina Jolie won an Oscar for Girl, Interrupted in 2000.'
+  },
+  {
+    id: 'cel-10',
+    avatar: '📺',
+    question: 'American talk-show host whose show ran for 25 years and who co-founded OWN.',
+    options: ['Ellen DeGeneres', 'Oprah Winfrey', 'Wendy Williams', 'Jay Leno'],
+    answer: 1,
+    fact: 'Oprah Winfrey was the first Black woman to become a self-made billionaire.'
+  },
+  {
+    id: 'cel-11',
+    avatar: '🎙',
+    question: 'The \u201cKing of Rock and Roll\u201d, from \u201cHound Dog\u201d to \u201cJailhouse Rock\u201d.',
+    options: ['Chuck Berry', 'Buddy Holly', 'Elvis Presley', 'Jerry Lee Lewis'],
+    answer: 2,
+    fact: 'Elvis\u2019s Graceland in Memphis is one of the most-visited homes in America.'
+  },
+  {
+    id: 'cel-12',
+    avatar: '🎹',
+    question: 'Frontman of Queen who wrote \u201cBohemian Rhapsody\u201d.',
+    options: ['Freddie Mercury', 'David Bowie', 'Elton John', 'Robert Plant'],
+    answer: 0,
+    fact: 'Freddie Mercury\u2019s 1985 Live Aid set is often voted the greatest live performance ever.'
+  },
+  {
+    id: 'cel-13',
+    avatar: '🎧',
+    question: 'British singer of \u201cHello\u201d and the album \u201c21\u201d.',
+    options: ['Amy Winehouse', 'Dua Lipa', 'Adele', 'Sia'],
+    answer: 2,
+    fact: 'Adele\u2019s 21 is the best-selling album of the 21st century so far.'
+  },
+  {
+    id: 'cel-14',
+    avatar: '🎻',
+    question: 'Sang \u201cShape of You\u201d and \u201cPerfect\u201d, and often performs loop-pedal sets.',
+    options: ['Ed Sheeran', 'Sam Smith', 'Harry Styles', 'Shawn Mendes'],
+    answer: 0,
+    fact: 'Ed Sheeran\u2019s \u00f7 (Divide) tour became the highest-grossing concert tour ever at the time.'
+  },
+  {
+    id: 'cel-15',
+    avatar: '💃',
+    question: 'Colombian star of \u201cHips Don\u2019t Lie\u201d and \u201cWaka Waka\u201d.',
+    options: ['Jennifer Lopez', 'Shakira', 'Gloria Estefan', 'Rosal\u00eda'],
+    answer: 1,
+    fact: 'Shakira\u2019s \u201cWaka Waka\u201d was the official song of the 2010 World Cup.'
+  },
+  {
+    id: 'cel-16',
+    avatar: '🌟',
+    question: '\u201cJ.Lo\u201d, singer and actress behind \u201cOn the Floor\u201d and \u201cHustlers\u201d.',
+    options: ['Jennifer Lopez', 'Beyonc\u00e9', 'Christina Aguilera', 'Jessica Alba'],
+    answer: 0,
+    fact: 'Jennifer Lopez co-headlined the 2020 Super Bowl halftime show with Shakira.'
+  },
+  {
+    id: 'cel-17',
+    avatar: '🕶',
+    question: 'From \u201cThe Fresh Prince\u201d to \u201cMen in Black\u201d, and an Oscar for \u201cAli\u201d nomination.',
+    options: ['Denzel Washington', 'Will Smith', 'Martin Lawrence', 'Jamie Foxx'],
+    answer: 1,
+    fact: 'Will Smith won the Best Actor Oscar for King Richard in 2022.'
+  },
+  {
+    id: 'cel-18',
+    avatar: '🛩',
+    question: 'Star of \u201cMission: Impossible\u201d and \u201cTop Gun\u201d, known for doing his own stunts.',
+    options: ['Tom Hanks', 'Tom Cruise', 'Keanu Reeves', 'Bruce Willis'],
+    answer: 1,
+    fact: 'Tom Cruise famously performed a HALO jump and hung off the side of a plane for stunts.'
+  },
+  {
+    id: 'cel-19',
+    avatar: '🎭',
+    question: 'The most Oscar-nominated actor in history, star of \u201cThe Devil Wears Prada\u201d.',
+    options: ['Cate Blanchett', 'Meryl Streep', 'Judi Dench', 'Glenn Close'],
+    answer: 1,
+    fact: 'Meryl Streep has more than 20 Academy Award nominations and three wins.'
+  },
+  {
+    id: 'cel-20',
+    avatar: '👒',
+    question: 'Star of \u201cBreakfast at Tiffany\u2019s\u201d and a lifelong humanitarian with UNICEF.',
+    options: ['Grace Kelly', 'Audrey Hepburn', 'Elizabeth Taylor', 'Vivien Leigh'],
+    answer: 1,
+    fact: 'Audrey Hepburn received a posthumous EGOT — Emmy, Grammy, Oscar and Tony.'
+  },
+  {
+    id: 'cel-21',
+    avatar: '🎩',
+    question: 'Silent-film icon whose \u201cLittle Tramp\u201d wore a bowler hat and cane.',
+    options: ['Buster Keaton', 'Charlie Chaplin', 'Harold Lloyd', 'Stan Laurel'],
+    answer: 1,
+    fact: 'Chaplin\u2019s The Gold Rush and City Lights are landmarks of silent cinema.'
+  },
+  {
+    id: 'cel-22',
+    avatar: '💋',
+    question: 'Hollywood icon of \u201cSome Like It Hot\u201d and \u201cGentlemen Prefer Blondes\u201d.',
+    options: ['Marilyn Monroe', 'Rita Hayworth', 'Jane Mansfield', 'Brigitte Bardot'],
+    answer: 0,
+    fact: 'Marilyn Monroe\u2019s white-dress scene over a subway grate is one of film\u2019s most famous images.'
+  },
+  {
+    id: 'cel-23',
+    avatar: '🥅',
+    question: 'English footballer famed for free kicks, later a club owner in Miami.',
+    options: ['Wayne Rooney', 'David Beckham', 'Steven Gerrard', 'Frank Lampard'],
+    answer: 1,
+    fact: 'David Beckham is a co-founder of Inter Miami CF.'
+  },
+  {
+    id: 'cel-24',
+    avatar: '🎾',
+    question: 'Winner of 23 Grand Slam singles titles, more than any other player in the Open Era.',
+    options: ['Venus Williams', 'Serena Williams', 'Martina Navratilova', 'Steffi Graf'],
+    answer: 1,
+    fact: 'Serena Williams won Grand Slams across three different decades.'
+  },
+  {
+    id: 'cel-25',
+    avatar: '⚡',
+    question: 'Jamaican sprinter, the fastest human on record over 100m and 200m.',
+    options: ['Usain Bolt', 'Carl Lewis', 'Tyson Gay', 'Yohan Blake'],
+    answer: 0,
+    fact: 'Usain Bolt\u2019s 9.58s 100m world record from 2009 still stands.'
+  }
+];
+
+const lebanon = [
+  {
+    id: 'leb-01',
+    question: 'What is the capital city of Lebanon?',
+    options: ['Tripoli', 'Beirut', 'Sidon', 'Zahle'],
+    answer: 1,
+    fact: 'Beirut has been inhabited for more than 5,000 years.'
+  },
+  {
+    id: 'leb-02',
+    question: 'Which tree appears at the centre of the Lebanese flag?',
+    options: ['Olive', 'Pine', 'Cedar', 'Cypress'],
+    answer: 2,
+    fact: 'The Lebanon cedar is an ancient symbol of the country, mentioned in the Epic of Gilgamesh.'
+  },
+  {
+    id: 'leb-03',
+    question: 'The monumental Roman temples in the Beqaa Valley are at which site?',
+    options: ['Baalbek', 'Byblos', 'Tyre', 'Anjar'],
+    answer: 0,
+    fact: 'Baalbek\u2019s Temple of Bacchus is among the best-preserved Roman temples anywhere.'
+  },
+  {
+    id: 'leb-04',
+    question: 'Which Lebanese town, also called Jbeil, is among the oldest continuously inhabited in the world?',
+    options: ['Tyre', 'Byblos', 'Batroun', 'Sidon'],
+    answer: 1,
+    fact: 'Byblos gave its name to the Bible and to the word \u201cpaper\u201d via papyrus trade.'
+  },
+  {
+    id: 'leb-05',
+    question: 'Which ancient seafaring people, credited with the alphabet, originated on the Lebanese coast?',
+    options: ['Minoans', 'Philistines', 'Phoenicians', 'Arameans'],
+    answer: 2,
+    fact: 'The Phoenician alphabet is the ancestor of Greek, Latin and Arabic scripts.'
+  },
+  {
+    id: 'leb-06',
+    question: 'What is considered the national dish of Lebanon?',
+    options: ['Kibbeh', 'Hummus', 'Falafel', 'Shawarma'],
+    answer: 0,
+    fact: 'Kibbeh is bulgur and minced meat, often shaped into a torpedo and fried or baked.'
+  },
+  {
+    id: 'leb-07',
+    question: 'The spectacular limestone caves that were a New7Wonders finalist are?',
+    options: ['Qadisha', 'Jeita Grotto', 'Afqa', 'Tannourine'],
+    answer: 1,
+    fact: 'Jeita Grotto\u2019s lower gallery is only accessible by boat.'
+  },
+  {
+    id: 'leb-08',
+    question: 'The famous rock formations off the Beirut coast at Raouche are known as?',
+    options: ['The Pigeon Rocks', 'The Monk\u2019s Rock', 'The Lion\u2019s Head', 'The Palm Islands'],
+    answer: 0,
+    fact: 'The Pigeon Rocks are Beirut\u2019s most photographed natural landmark.'
+  },
+  {
+    id: 'leb-09',
+    question: 'What is the highest peak in Lebanon?',
+    options: ['Mount Sannine', 'Qurnat as-Sawda', 'Mount Hermon', 'The Cedars'],
+    answer: 1,
+    fact: 'Qurnat as-Sawda reaches about 3,088 metres.'
+  },
+  {
+    id: 'leb-10',
+    question: 'Which sea lies along Lebanon\u2019s western coast?',
+    options: ['Red Sea', 'Mediterranean Sea', 'Black Sea', 'Caspian Sea'],
+    answer: 1,
+    fact: 'Lebanon\u2019s coastline runs about 225 km along the eastern Mediterranean.'
+  },
+  {
+    id: 'leb-11',
+    question: 'Before the civil war, Beirut was famously nicknamed what?',
+    options: ['Paris of the Middle East', 'Rome of the East', 'Venice of the Levant', 'Athens of Asia'],
+    answer: 0,
+    fact: 'The nickname reflected Beirut\u2019s caf\u00e9 culture and French-influenced architecture before the civil war.'
+  },
+  {
+    id: 'leb-12',
+    question: 'Which legendary Lebanese singer is beloved across the Arab world for songs like \u201cKifak Inta\u201d?',
+    options: ['Fairuz', 'Umm Kulthum', 'Najwa Karam', 'Sabah'],
+    answer: 0,
+    fact: 'Fairuz\u2019s morning songs are a daily ritual in homes across Lebanon.'
+  },
+  {
+    id: 'leb-13',
+    question: 'The ancient port city also known as Saida is?',
+    options: ['Tyre', 'Sidon', 'Batroun', 'Jounieh'],
+    answer: 1,
+    fact: 'Sidon\u2019s Sea Castle was built by the Crusaders in the 13th century.'
+  },
+  {
+    id: 'leb-14',
+    question: 'The coastal city also called Sour, home to a famous Roman hippodrome, is?',
+    options: ['Tyre', 'Tripoli', 'Byblos', 'Akkar'],
+    answer: 0,
+    fact: 'Tyre\u2019s hippodrome is one of the largest ever built in the Roman world.'
+  },
+  {
+    id: 'leb-15',
+    question: 'Which valley is famous for vineyards and the historic Ch\u00e2teau Ksara winery?',
+    options: ['Qadisha Valley', 'Beqaa Valley', 'Nahr Ibrahim', 'Wadi Khaled'],
+    answer: 1,
+    fact: 'Ksara, founded by Jesuits in 1857, is Lebanon\u2019s oldest winery.'
+  },
+  {
+    id: 'leb-16',
+    question: 'The \u201cHoly Valley\u201d, a UNESCO site of ancient monasteries, is?',
+    options: ['Wadi Qadisha', 'Wadi Hammana', 'Nahr el-Kalb', 'Wadi Channine'],
+    answer: 0,
+    fact: 'Qadisha sheltered Maronite Christian communities for centuries.'
+  },
+  {
+    id: 'leb-17',
+    question: 'The ancient Cedars of God forest is closest to which town?',
+    options: ['Zgharta', 'Bsharri', 'Ehden', 'Douma'],
+    answer: 1,
+    fact: 'Some trees in the Arz el-Rab forest are believed to be over a thousand years old.'
+  },
+  {
+    id: 'leb-18',
+    question: 'Lebanon shares land borders with Syria and which other country?',
+    options: ['Jordan', 'Iraq', 'Israel', 'Cyprus'],
+    answer: 2,
+    fact: 'Cyprus lies about 160 km offshore but is separated by sea, not land.'
+  },
+  {
+    id: 'leb-19',
+    question: 'The Lebanese flag is red and white with the cedar in which colour?',
+    options: ['Green', 'Black', 'Gold', 'Blue'],
+    answer: 0,
+    fact: 'The green cedar sits between two red bands on a white field.'
+  },
+  {
+    id: 'leb-20',
+    question: 'Tabbouleh, the national salad, is based on which herb?',
+    options: ['Mint', 'Parsley', 'Coriander', 'Basil'],
+    answer: 1,
+    fact: 'Tabbouleh is parsley with bulgur, tomato, onion, lemon and olive oil.'
+  },
+  {
+    id: 'leb-21',
+    question: 'The Phoenicians were famed for producing which precious dye?',
+    options: ['Indigo', 'Tyrian purple', 'Cochineal red', 'Saffron yellow'],
+    answer: 1,
+    fact: 'Tyrian purple was so costly it became the colour of royalty.'
+  },
+  {
+    id: 'leb-22',
+    question: 'The mountain range that gives the country much of its name is?',
+    options: ['Mount Lebanon range', 'Anti-Lebanon', 'Chouf highlands', 'Amanus'],
+    answer: 0,
+    fact: 'The Mount Lebanon range runs the length of the country, with the Anti-Lebanon on the Syrian border.'
+  },
+  {
+    id: 'leb-23',
+    question: 'The popular Lebanese anise-flavoured spirit, usually served with mezze, is?',
+    options: ['Arak', 'Ouzo', 'Raki', 'Sambuca'],
+    answer: 0,
+    fact: 'Arak turns milky when water is added and is nicknamed \u201cmilk of lions\u201d.'
+  },
+  {
+    id: 'leb-24',
+    question: 'Which Lebanese-American writer wrote \u201cThe Prophet\u201d?',
+    options: ['Amin Maalouf', 'Kahlil Gibran', 'Elias Khoury', 'Hassan Daoud'],
+    answer: 1,
+    fact: 'The Prophet (1923) has been translated into more than 100 languages.'
+  },
+  {
+    id: 'leb-25',
+    question: 'Which university, founded in Beirut in 1866, is among the oldest in the region?',
+    options: ['Universit\u00e9 Saint-Joseph', 'American University of Beirut', 'Lebanese University', 'Notre Dame University'],
+    answer: 1,
+    fact: 'The American University of Beirut opened as the Syrian Protestant College in 1866.'
+  }
+];
+
 const CATEGORIES = {
   geography: { name: 'Geography', accent: '#38c9a4' },
   history: { name: 'History', accent: '#f0b357' },
-  general: { name: 'General Knowledge', accent: '#7c96ff' }
+  general: { name: 'General Knowledge', accent: '#7c96ff' },
+  celebrities: { name: 'Celebrities', accent: '#ef6ea8' },
+  lebanon: { name: 'Lebanon', accent: '#58b368' }
 };
 
 const BANK = {
   geography: geography.map((q) => ({ ...q, category: 'geography' })),
   history: history.map((q) => ({ ...q, category: 'history' })),
-  general: general.map((q) => ({ ...q, category: 'general' }))
+  general: general.map((q) => ({ ...q, category: 'general' })),
+  celebrities: celebrities.map((q) => ({ ...q, category: 'celebrities' })),
+  lebanon: lebanon.map((q) => ({ ...q, category: 'lebanon' }))
 };
 
 module.exports = { BANK, CATEGORIES };

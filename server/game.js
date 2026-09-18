@@ -11,6 +11,7 @@
 
 const crypto = require('node:crypto');
 const { BANK, CATEGORIES } = require('./questions');
+const branding = require('./branding');
 
 const PHASE = {
   LOBBY: 'lobby',
@@ -20,7 +21,7 @@ const PHASE = {
 };
 
 const DEFAULT_SETTINGS = {
-  categories: ['geography', 'history', 'general'],
+  categories: ['geography', 'history', 'general', 'celebrities', 'lebanon'],
   perCategory: 25,
   seconds: 20,
   shuffle: true
@@ -340,6 +341,8 @@ class Room {
       categoryName: question.categoryName,
       question: question.question,
       options: question.options,
+      avatar: question.avatar || null,
+      image: question.image || null,
       correctIndex: question.answer,
       fact: question.fact,
       counts,
@@ -415,10 +418,12 @@ class Room {
     const activeCount = this.#activeCount;
     const q = this.currentQuestion();
 
+    const brand = branding.toPublic();
     return {
       rev: this.rev,
       code: this.code,
-      orgName: this.orgName,
+      orgName: brand.orgName || this.orgName,
+      branding: brand,
       phase: this.phase,
       serverTime: this.clock(),
       settings: {
@@ -440,6 +445,8 @@ class Room {
               categoryName: q.categoryName,
               text: q.question,
               options: q.options,
+              avatar: q.avatar || null,
+              image: q.image || null,
               answeredCount: this.answers.size,
               deadline: this.deadline,
               durationMs: this.durationMs()

@@ -1738,3 +1738,155 @@ kbd {
   background: var(--surface-2);
   color: var(--text-dim);
 }
+
+/* Lobby tab switcher (Game setup / Branding) */
+.lobby-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 4px;
+  background: rgba(6, 9, 16, 0.6);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+}
+
+.lobby-tabs button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--text-dim);
+  padding: 11px 8px;
+  border-radius: 11px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.lobby-tabs button[aria-selected='true'] {
+  background: var(--surface-3);
+  color: var(--text);
+}
+
+/* Branding: logo preview + colour input */
+.brand-logo-preview {
+  width: 84px;
+  height: 84px;
+  flex: none;
+  border-radius: var(--r-md);
+  border: 1px dashed var(--line-2);
+  background: var(--surface);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  font-size: 11px;
+}
+
+.brand-logo-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.color-input {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 56px;
+  height: 40px;
+  padding: 3px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--line-2);
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.color-input::-webkit-color-swatch-wrapper {
+  padding: 2px;
+}
+
+.color-input::-webkit-color-swatch {
+  border: none;
+  border-radius: 7px;
+}
+
+.color-input::-moz-color-swatch {
+  border: none;
+  border-radius: 7px;
+}
+
+/* Wordmark logo swap when a custom logo is set */
+.mark.has-logo {
+  background: var(--surface-3);
+  background-size: cover;
+  background-position: center;
+}
+
+.mark.has-logo svg {
+  display: none;
+}
+
+/* Celebrity-style visual tile */
+.media-tile {
+  display: grid;
+  place-items: center;
+  margin-bottom: 20px;
+}
+
+.media-tile .media-emoji {
+  width: 108px;
+  height: 108px;
+  border-radius: 26px;
+  display: grid;
+  place-items: center;
+  font-size: 60px;
+  line-height: 1;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--line-2);
+  box-shadow: 0 16px 40px -18px rgba(0, 0, 0, 0.7);
+}
+
+.media-tile .media-img {
+  width: 148px;
+  height: 148px;
+  object-fit: cover;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--line-2);
+  box-shadow: 0 16px 40px -18px rgba(0, 0, 0, 0.7);
+}
+
+.media-tile.small .media-emoji {
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+  font-size: 40px;
+}
+
+.media-tile.small .media-img {
+  width: 96px;
+  height: 96px;
+}
+
+/* Phone media tile slightly smaller so answers stay above the fold */
+.player-body .media-tile {
+  margin-bottom: 14px;
+}
+
+.player-body .media-tile .media-emoji {
+  width: 84px;
+  height: 84px;
+  font-size: 46px;
+  border-radius: 20px;
+}
+
+.player-body .media-tile .media-img {
+  width: 110px;
+  height: 110px;
+}
+
+/* Organisation tagline */
+.tagline {
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--text-dim);
+}

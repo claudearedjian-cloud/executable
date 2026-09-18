@@ -12,8 +12,8 @@ const { BANK, CATEGORIES } = require('../server/questions');
 
 const CATEGORY_IDS = Object.keys(BANK);
 
-test('there are exactly three categories', () => {
-  assert.deepEqual(CATEGORY_IDS, ['geography', 'history', 'general']);
+test('there are exactly five categories', () => {
+  assert.deepEqual(CATEGORY_IDS, ['geography', 'history', 'general', 'celebrities', 'lebanon']);
   for (const id of CATEGORY_IDS) {
     assert.ok(CATEGORIES[id], `missing display entry for ${id}`);
     assert.equal(typeof CATEGORIES[id].name, 'string');
@@ -26,7 +26,7 @@ test('every category holds exactly 25 questions', () => {
     assert.equal(BANK[id].length, 25, `${id} should have 25 questions, has ${BANK[id].length}`);
   }
   const total = CATEGORY_IDS.reduce((n, id) => n + BANK[id].length, 0);
-  assert.equal(total, 75);
+  assert.equal(total, 125);
 });
 
 test('every question is well formed', () => {
@@ -35,12 +35,16 @@ test('every question is well formed', () => {
       const where = `${id}/${q.id}`;
 
       assert.equal(typeof q.id, 'string', `${where}: id`);
-      assert.match(q.id, /^(geo|his|gen)-\d{2}$/, `${where}: id should look like geo-01`);
+      assert.match(q.id, /^(geo|his|gen|cel|leb)-\d{2}$/, `${where}: id should look like geo-01`);
       assert.equal(q.category, id, `${where}: category tag must match its group`);
+
+      if (q.avatar !== undefined) assert.equal(typeof q.avatar, 'string', `${where}: avatar`);
+      if (q.image !== undefined) assert.equal(typeof q.image, 'string', `${where}: image`);
 
       assert.equal(typeof q.question, 'string');
       assert.ok(q.question.trim().length >= 10, `${where}: question looks too short`);
-      assert.ok(q.question.trim().endsWith('?'), `${where}: question should end with a question mark`);
+      // Direct questions end in '?'; clue-style (celebrity) prompts use an avatar instead.
+      assert.ok(q.question.trim().endsWith('?') || q.avatar, `${where}: question should end with a question mark or be an avatar clue`);
 
       assert.ok(Array.isArray(q.options), `${where}: options must be an array`);
       assert.equal(q.options.length, 4, `${where}: must have exactly 4 options`);

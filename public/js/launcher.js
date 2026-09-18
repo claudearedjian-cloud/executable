@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  const { qs, request, store } = window.QN;
+  const { qs, request, store, applyBranding } = window.QN;
 
   const tabJoin = document.getElementById('tabJoin');
   const tabHost = document.getElementById('tabHost');
@@ -107,10 +107,8 @@
 
   request('/api/meta')
     .then((meta) => {
-      if (meta && meta.orgName) {
-        orgName.textContent = meta.orgName;
-        document.title = `Quiz Night — ${meta.orgName}`;
-      }
+      if (meta && meta.branding) applyBranding(meta.branding);
+      if (meta && meta.orgName) document.title = `Quiz Night — ${meta.orgName}`;
     })
     .catch(() => {
       /* the default name in the markup is fine */
