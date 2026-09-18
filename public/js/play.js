@@ -176,6 +176,12 @@
     const current = state.me && state.me.choice !== null && state.me.choice !== undefined ? state.me.choice : null;
     if (current !== null) return;
 
+    // The reveal can land while the request below is in flight (timer runs
+    // out, or the last other player answers). Capture the question now and
+    // only redraw the answer grid if that same question is still live —
+    // otherwise we would render against a null question and toast a crash.
+    const clickedQuestion = state.question;
+
     submitting = true;
     vibrate(12);
 
@@ -185,7 +191,9 @@
         body: { playerId: session.playerId, token: session.token, choice: index }
       });
       if (state.me) state.me.choice = index;
-      renderAnswers(state.question, index);
+      if (state.phase === 'question' && state.question && state.question.number === clickedQuestion.number) {
+        renderAnswers(clickedQuestion, index);
+      }
     } catch (err) {
       toast(err.message);
     } finally {
