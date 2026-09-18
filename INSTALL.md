@@ -33,14 +33,23 @@ No database, no accounts, no internet connection at the venue.
 
 ## Step 2 — Get the files
 
-Copy the `executable` folder onto the laptop. Any of these work:
+> **Important:** the app is not on the repository's default `main` branch yet —
+> it lives on the working branch. A bare `git clone` lands you on `main`, which
+> contains only the README, and `node server/index.js` will then fail with
+> *Cannot find module*. You must check the working branch out, as shown below.
+
+Copy the `executable` folder onto the laptop. Either of these work:
 
 - **From GitHub** (needs `git` installed):
 
   ```
   git clone https://github.com/claudearedjian-cloud/executable.git quiz-night
   cd quiz-night
+  git checkout arena/01a0b357-executable
   ```
+
+  (Once the open pull request is merged, the `git checkout` line goes away and a
+  plain clone works.)
 
 - **From a USB stick** — copy the whole folder across, then open a terminal in
   it. On Windows, open the folder in Explorer, click in the address bar, type
@@ -224,6 +233,7 @@ If you'd rather host it somewhere always-on than on a laptop:
 ```
 git clone https://github.com/claudearedjian-cloud/executable.git
 cd executable
+git checkout arena/01a0b357-executable
 PORT=4173 node server/index.js
 ```
 
