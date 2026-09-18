@@ -1,0 +1,19 @@
+{
+  "name": "quiz-night",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A self-hosted trivia night app: one host screen, everyone else plays from their phone.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "test": "node --test \"tests/**/*.test.js\""
+  },
+  "devDependencies": {
+    "jsqr": "^1.4.0",
+    "qrcode": "^1.5.4"
+  }
+}

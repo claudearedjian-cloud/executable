@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#070a11" />
+    <meta name="description" content="Answer the quiz from your phone." />
+    <title>Quiz Night — Play</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <div class="player-shell">
+      <header class="player-top">
+        <span class="wordmark sm">
+          <span class="mark">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3" />
+              <path d="M12 17h.01" />
+            </svg>
+          </span>
+          <span class="name">Quiz Night</span>
+        </span>
+        <div class="row">
+          <span class="chip chip-live" id="connChip"><span class="dot"></span><span id="connText">Connecting</span></span>
+          <span class="score-pill" id="scorePill" hidden>
+            <span class="n mono" id="myScore">0</span><span class="l">pts</span>
+          </span>
+        </div>
+      </header>
+
+      <div class="player-body">
+        <!-- Not seated yet -->
+        <section id="viewJoin" class="view">
+          <div class="card card-pad">
+            <h2>Join the game</h2>
+            <p class="muted mt-s">Type in the code from the big screen and pick a name.</p>
+
+            <form id="joinForm" class="mt-m" novalidate>
+              <label class="field" for="joinCode">
+                <span class="field-label">Game code</span>
+                <input id="joinCode" class="input input-code" type="text" autocapitalize="characters" autocomplete="off" spellcheck="false" maxlength="6" placeholder="ABCD" />
+              </label>
+
+              <label class="field mt-m" for="joinName">
+                <span class="field-label">Your name</span>
+                <input id="joinName" class="input" type="text" autocomplete="nickname" maxlength="24" placeholder="e.g. Priya" />
+              </label>
+
+              <button class="btn btn-primary btn-lg btn-block mt-m" type="submit" id="joinBtn">Join the game</button>
+            </form>
+
+            <div class="notice" id="notice" role="alert"></div>
+          </div>
+        </section>
+
+        <!-- Waiting for the host -->
+        <section id="viewLobby" class="view">
+          <div class="waiting">
+            <div class="orb" aria-hidden="true"></div>
+            <div>
+              <h2 id="lobbyTitle">You're in</h2>
+              <p class="muted mt-s" id="lobbySub">Waiting for the host to start the game.</p>
+            </div>
+            <div class="card card-pad text-centre w-full">
+              <p class="eyebrow">Players joined</p>
+              <p class="count-big mono mt-s" id="lobbyCount">1</p>
+            </div>
+            <p class="faint">Keep this page open — you'll answer here.</p>
+          </div>
+        </section>
+
+        <!-- Live question -->
+        <section id="viewQuestion" class="view">
+          <div class="p-countdown" id="pCountdown"><div class="fill" id="pCountdownFill"></div></div>
+
+          <div class="p-meta">
+            <div class="row">
+              <span class="pill-cat" id="pCat"><span class="swatch"></span><span id="pCatName">Round</span></span>
+              <span class="q-counter mono" id="pCounter">1 / 75</span>
+            </div>
+            <span class="timer mono" id="pTimer">20</span>
+          </div>
+
+          <h2 class="p-question" id="pQuestion">Loading question…</h2>
+
+          <div class="answers" id="pAnswers" role="group" aria-label="Answer options"></div>
+
+          <div class="locked-banner hidden" id="pLocked">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20 6 9 17l-5-5" />
+            </svg>
+            <span>Answer locked in</span>
+          </div>
+        </section>
+
+        <!-- Answer revealed -->
+        <section id="viewReveal" class="view">
+          <div class="result-hero" id="pHero">
+            <div class="verdict" id="pVerdict">—</div>
+            <div class="pts" id="pPoints">—</div>
+          </div>
+
+          <div class="card card-pad">
+            <p class="eyebrow">The answer was</p>
+            <p class="q-text reveal mt-s" id="pCorrectText">—</p>
+            <div class="fact-box" id="pFactBox">
+              <span class="icon" aria-hidden="true">💡</span>
+              <span class="body" id="pFact">—</span>
+            </div>
+          </div>
+
+          <h3 class="mt-l" id="pBoardTitle">Scoreboard</h3>
+          <div class="standings mt-s" id="pStandings"></div>
+        </section>
+
+        <!-- Game over -->
+        <section id="viewFinished" class="view">
+          <div class="result-hero good" id="finalHero">
+            <p class="eyebrow">Final result</p>
+            <div class="verdict mt-s" id="finalPlace">—</div>
+            <div class="pts" id="finalSummary">—</div>
+          </div>
+
+          <h3 class="mt-m">Full scoreboard</h3>
+          <div class="standings mt-s" id="finalStandings"></div>
+
+          <button class="btn btn-ghost btn-block mt-l" type="button" id="leaveBtn">Leave the game</button>
+        </section>
+
+        <!-- Session lost -->
+        <section id="viewGone" class="view">
+          <div class="card card-pad text-centre">
+            <h2>This game has closed</h2>
+            <p class="muted mt-s" id="goneReason">The host has finished or reset the game. Ask for the code and join again.</p>
+            <a class="btn btn-primary btn-lg btn-block mt-l" href="/">Back to the start</a>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/play.js"></script>
+  </body>
+</html>

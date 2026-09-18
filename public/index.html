@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#070a11" />
+    <meta name="description" content="Trivia night for the community centre. One screen runs the game, everyone else plays from their phone." />
+    <title>Quiz Night</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <main class="center-stage">
+      <div class="launcher">
+        <div class="launcher-head">
+          <span class="wordmark">
+            <span class="mark">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3" />
+                <path d="M12 17h.01" />
+              </svg>
+            </span>
+            <span>
+              <span class="name">Quiz Night</span>
+              <span class="org" id="orgName">Community Centre</span>
+            </span>
+          </span>
+          <h1>Trivia night, sorted.</h1>
+          <p>One screen runs the game. Everybody else answers from their own phone.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-pad">
+            <div class="mode-switch" role="tablist" aria-label="Choose what you want to do">
+              <button id="tabJoin" role="tab" type="button" aria-selected="true" aria-controls="paneJoin">Join a game</button>
+              <button id="tabHost" role="tab" type="button" aria-selected="false" aria-controls="paneHost">Run the game</button>
+            </div>
+
+            <!-- Join a game -->
+            <section id="paneJoin" role="tabpanel" aria-labelledby="tabJoin">
+              <form id="joinForm" novalidate>
+                <label class="field" for="joinCode">
+                  <span class="field-label">Game code</span>
+                  <input
+                    id="joinCode"
+                    class="input input-code"
+                    type="text"
+                    inputmode="text"
+                    autocomplete="off"
+                    autocapitalize="characters"
+                    spellcheck="false"
+                    maxlength="6"
+                    placeholder="ABCD"
+                    aria-describedby="joinCodeHint"
+                  />
+                </label>
+                <p id="joinCodeHint" class="hint-centre">Shown at the top of the big screen.</p>
+
+                <label class="field mt-m" for="joinName">
+                  <span class="field-label">Your name</span>
+                  <input id="joinName" class="input" type="text" autocomplete="nickname" maxlength="24" placeholder="e.g. Priya" />
+                </label>
+
+                <button class="btn btn-primary btn-lg btn-block mt-m" type="submit" id="joinBtn">Join the game</button>
+              </form>
+            </section>
+
+            <!-- Run the game -->
+            <section id="paneHost" role="tabpanel" aria-labelledby="tabHost" hidden>
+              <p class="lede">
+                Set the game up on a laptop and point it at the big screen. You get a four-letter code for players to
+                type in, and a live scoreboard to project all evening.
+              </p>
+
+              <ul class="feature-list mt-m">
+                <li>
+                  <span class="bullet teal" aria-hidden="true"></span>
+                  <span>75 questions across Geography, History and General Knowledge</span>
+                </li>
+                <li>
+                  <span class="bullet gold" aria-hidden="true"></span>
+                  <span>A fun fact after every answer, ready for the host to read out</span>
+                </li>
+                <li>
+                  <span class="bullet brand" aria-hidden="true"></span>
+                  <span>Faster answers score more, so ties break themselves</span>
+                </li>
+              </ul>
+
+              <button class="btn btn-primary btn-lg btn-block mt-l" type="button" id="createBtn">Create a new game</button>
+              <p class="hint-centre mt-s">Nothing needs installing on the players' phones.</p>
+            </section>
+
+            <div class="notice" id="notice" role="alert"></div>
+          </div>
+        </div>
+
+        <p class="launcher-foot">Runs on the venue's own Wi-Fi. No accounts, no app store, and nothing leaves the building.</p>
+      </div>
+    </main>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/launcher.js"></script>
+  </body>
+</html>
