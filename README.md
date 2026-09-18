@@ -11,6 +11,10 @@ node server/index.js
 Then open **http://localhost:4173** — pick *Run the game* on the laptop that is
 plugged into the projector, and *Join a game* on every phone.
 
+Setting this up for the first time? **[INSTALL.md](INSTALL.md)** walks through
+it step by step, including firewalls, the on-the-night checklist and
+troubleshooting.
+
 ---
 
 ## How a night runs
@@ -59,7 +63,17 @@ a single file built on Node's `http` module.
 ```bash
 node server/index.js          # start on port 4173
 npm run dev                   # same, reloading on change
-npm test                      # run the test suite
+npm test                      # run the test suite (needs `npm install` once)
+```
+
+The server prints the address players should type, including the machine's
+LAN IP:
+
+```
+  Quiz Night is running
+
+  Players join      →  http://192.168.1.42:4173
+  Host screen       →  http://192.168.1.42:4173/host
 ```
 
 | Variable    | Default              | What it does                            |

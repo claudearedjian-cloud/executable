@@ -10,6 +10,7 @@
 
 const http = require('node:http');
 const fs = require('node:fs');
+const os = require('node:os');
 const path = require('node:path');
 const { URL } = require('node:url');
 
@@ -388,13 +389,56 @@ const server = http.createServer(async (req, res) => {
 server.keepAliveTimeout = 65000;
 server.headersTimeout = 70000;
 
+/** Non-internal IPv4 addresses, so the startup banner can show a joinable URL. */
+function lanAddresses() {
+  const found = [];
+  for (const list of Object.values(os.networkInterfaces())) {
+    for (const iface of list || []) {
+      if (iface.family === 'IPv4' && !iface.internal) found.push(iface.address);
+    }
+  }
+  return found;
+}
+
 if (require.main === module) {
+  // A taken port is the most likely way for a first run to fail, and a raw
+  // stack trace is no help to whoever is setting this up in the hall.
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.error('');
+      console.error(`  Port ${PORT} is already in use.`);
+      console.error('  Quiz Night may already be running — check for another window or terminal.');
+      console.error(`  Otherwise pick a different port:  PORT=4200 node server/index.js`);
+      console.error('');
+      process.exit(1);
+    }
+    if (err.code === 'EACCES') {
+      console.error('');
+      console.error(`  Not allowed to listen on port ${PORT}.`);
+      console.error('  Ports below 1024 need administrator rights — try PORT=4173 instead.');
+      console.error('');
+      process.exit(1);
+    }
+    throw err;
+  });
+
   server.listen(PORT, HOST, () => {
-    const shown = HOST === '0.0.0.0' ? 'localhost' : HOST;
+    const addresses = lanAddresses();
     console.log('');
     console.log('  Quiz Night is running');
-    console.log(`  Host screen  →  http://${shown}:${PORT}/host`);
-    console.log(`  Players join →  http://${shown}:${PORT}/`);
+    console.log('');
+    if (addresses.length === 0) {
+      console.log(`  This machine      →  http://localhost:${PORT}`);
+      console.log('  No network found — connect to Wi-Fi so players can reach you.');
+    } else {
+      for (const address of addresses) {
+        console.log(`  Players join      →  http://${address}:${PORT}`);
+      }
+      console.log(`  Host screen       →  http://${addresses[0]}:${PORT}/host`);
+    }
+    console.log('');
+    console.log('  Share that address with the room. Everyone must be on the same Wi-Fi.');
+    console.log('  Press Ctrl+C to stop.');
     console.log('');
   });
 }
